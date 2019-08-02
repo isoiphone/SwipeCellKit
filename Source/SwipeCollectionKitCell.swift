@@ -103,22 +103,23 @@ open class SwipeCollectionKitCell: UIView {
     override open func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         guard let superview = superview else { return false }
         
-        let point = convert(point, to: superview)
+        let pointInView = convert(point, to: superview)
         
         if !UIAccessibility.isVoiceOverRunning {
             for cell in collectionView?.swipeCells ?? [] {
-                if (cell.state == .left || cell.state == .right) && !cell.contains(point: point) {
+                if (cell.state == .left || cell.state == .right) && !cell.contains(point: pointInView) {
                     collectionView?.hideSwipeCell()
                     return false
                 }
             }
         }
         
-        return contains(point: point)
+        return contains(point: pointInView)
     }
     
     func contains(point: CGPoint) -> Bool {
-        return frame.contains(point)
+        let adjustedFrame = CGRect(origin: CGPoint(x: 0, y: frame.origin.y), size: frame.size)
+        return adjustedFrame.contains(point)
     }
     
     // Override hitTest(_:with:) here so that we can make sure our `actionsView` gets the touch event
